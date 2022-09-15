@@ -1,0 +1,13 @@
+
+.git
+.github
+.husky
+.vscode
+
+dist
+node_modules
+terraform
+terraform-dev
+test
+
+npm-debug.log

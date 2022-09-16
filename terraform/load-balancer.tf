@@ -5,16 +5,6 @@ resource "azurerm_public_ip" "azurePublicIp" {
   allocation_method   = "Dynamic"
 }
 
-#&nbsp;since these variables are re-used - a locals block makes this more maintainable
-locals {
-  backend_address_pool_name      = "${azurerm_virtual_network.vnet.name}-cicdbackendpool"
-  frontend_port_name             = "${azurerm_virtual_network.vnet.name}-cicdfrontendpool"
-  frontend_ip_configuration_name = "${azurerm_virtual_network.vnet.name}-cicdfrontendipconf"
-  http_setting_name              = "${azurerm_virtual_network.vnet.name}-cicdhttpsetting"
-  listener_name                  = "${azurerm_virtual_network.vnet.name}-cicdlistener"
-  request_routing_rule_name      = "${azurerm_virtual_network.vnet.name}-cicdreqroutingname"
-  redirect_configuration_name    = "${azurerm_virtual_network.vnet.name}-cicdredconfname"
-}
 
 
 
@@ -22,6 +12,7 @@ resource "azurerm_application_gateway" "network" {
   name                = local.load_balancer_name
   resource_group_name = local.resource_group_name
   location            = local.location
+
 
   sku {
     name = "Standard_Small"
@@ -79,6 +70,7 @@ resource "azurerm_application_gateway" "network" {
   }
 
   depends_on = [
+    azurerm_resource_group.azureResourceGroup,
     azurerm_subnet.backend,
     azurerm_subnet.frontend
   ]

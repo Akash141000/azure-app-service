@@ -14,4 +14,9 @@ resource "azurerm_container_registry" "acr" {
   #   zone_redundancy_enabled = true
   #   tags                    = {}
   # }
+
+  depends_on = [
+    azurerm_resource_group.azureResourceGroup
+
+  ]
 }

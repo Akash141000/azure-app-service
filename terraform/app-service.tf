@@ -5,6 +5,10 @@ resource "azurerm_service_plan" "azureAppServicePlan" {
   location            = local.location
   os_type             = "Linux"
   sku_name            = "B1"
+
+  depends_on = [
+    azurerm_resource_group.azureResourceGroup
+  ]
 }
 
 resource "azurerm_linux_web_app" "azureLinuxWebApp" {
@@ -13,10 +17,12 @@ resource "azurerm_linux_web_app" "azureLinuxWebApp" {
   location            = local.location
   service_plan_id     = azurerm_service_plan.azureAppServicePlan.id
 
+
   site_config {}
 
 
   depends_on = [
+    azurerm_resource_group.azureResourceGroup,
     azurerm_service_plan.azureAppServicePlan
   ]
 }

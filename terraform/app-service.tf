@@ -14,10 +14,18 @@ resource "azurerm_linux_web_app" "azureLinuxWebApp" {
   service_plan_id     = azurerm_service_plan.azureAppServicePlan.id
 
   site_config {}
+
+
+  depends_on = [
+    azurerm_service_plan.azureAppServicePlan
+  ]
 }
 
 
-resource "azurerm_app_service_source_control" "azureServiceSourceControl" {
-  app_id = azurerm_service_plan.azureAppServicePlan.id
+# resource "azurerm_app_service_source_control" "azureServiceSourceControl" {
+#   app_id = azurerm_service_plan.azureAppServicePlan.id
+#   depends_on = [
+#     azurerm_linux_web_app.azureLinuxWebApp
+#   ]
 
-}
+# }

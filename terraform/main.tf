@@ -1,19 +1,25 @@
 
 terraform {
   required_providers {
-    name = {
-      source = "azure"
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "=3.0.0"
     }
   }
-  backend "azurerm" {
-    resource_group_name  = "tfstate-cicd-testing"
-    storage_account_name = "cicdresourcegroup"
-    container_name       = "cicdterraformcontainer"
-    key                  = "terraform.tfstate"
-  }
+  # backend "azurerm" {
+  #   resource_group_name  = "tfstate-cicd-testing"
+  #   storage_account_name = "cicdresourcegroup"
+  #   container_name       = "cicdterraformcontainer"
+  #   key                  = "terraform.tfstate"
+  # }
 }
 
-provider "azure" {
-  client_id     = ""
-  client_secret = ""
+provider "azurerm" {
+  features {
+
+  }
+  tenant_id       = ""
+  subscription_id = ""
+  client_id       = ""
+  client_secret   = ""
 }

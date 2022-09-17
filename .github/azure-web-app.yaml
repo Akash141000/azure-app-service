@@ -1,18 +1,43 @@
-name: CICD
+on:
+  push:
+    branches:
+      - master
 
-on: [push]
+name: CICD Azure
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    env:
+      REGISTRY_NAME: cicdtestingregistry
+      APP_NAME: cicd-web-app
 
     steps:
-      - uses: actions/checkout@v2
+      # checkout the repo
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@main
+
+      - name: 'Login via Azure CLI'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID
+
       - uses: azure/docker-login@v1
         with:
-          login-server: mycontainer.azurecr.io
+          login-server: ${{ env.REGISTRY_NAME }}.azurecr.io
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
       - run: |
-          docker build . -t mycontainer.azurecr.io/myapp:${{ github.sha }}
-          docker push mycontainer.azurecr.io/myapp:${{ github.sha }}
+          docker build . -t ${{ env.REGISTRY_NAME }}.azurecr.io/:${{ github.sha }}
+          docker push mycontainer.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
+
+      - uses: azure/webapps-deploy@v2
+        with:
+          app-name: '${{ env.APP_NAME }}'
+          images: '${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}'
+
+      - name: Azure logout
+        run: |
+          az logout

@@ -28,6 +28,16 @@ resource "azurerm_application_gateway" "network" {
   }
 
 
+  probe {
+    name                                      = "healthProbe"
+    pick_host_name_from_backend_http_settings = true
+    port                                      = 80
+    interval                                  = 60
+    path                                      = "/"
+    timeout                                   = 200
+    protocol                                  = "Http"
+  }
+
 
   frontend_port {
     name = local.frontend_port_name
@@ -44,12 +54,14 @@ resource "azurerm_application_gateway" "network" {
   }
 
   backend_http_settings {
-    name                  = local.http_setting_name
-    cookie_based_affinity = "Disabled"
-    path                  = "/"
-    port                  = 80
-    protocol              = "Http"
-    request_timeout       = 60
+    name                                = local.http_setting_name
+    cookie_based_affinity               = "Disabled"
+    path                                = "/"
+    port                                = 80
+    protocol                            = "Http"
+    request_timeout                     = 60
+    probe_name                          = "healthProbe"
+    pick_host_name_from_backend_address = true
   }
 
   http_listener {

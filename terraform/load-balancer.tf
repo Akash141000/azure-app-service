@@ -2,7 +2,8 @@ resource "azurerm_public_ip" "azurePublicIp" {
   name                = local.public_ip_name
   location            = local.location
   resource_group_name = local.resource_group_name
-  allocation_method   = "Dynamic"
+  allocation_method   = "Static"
+  sku                 = "Standard"
 }
 
 
@@ -14,9 +15,11 @@ resource "azurerm_application_gateway" "network" {
   location            = local.location
 
 
+
   sku {
-    name = "Standard_Small"
-    tier = "Standard"
+    name = "Standard_v2"
+    tier = "Standard_v2"
+    #capacity = 1
   }
 
   gateway_ip_configuration {

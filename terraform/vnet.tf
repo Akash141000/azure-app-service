@@ -48,6 +48,12 @@ resource "azurerm_subnet" "backend" {
   resource_group_name  = local.resource_group_name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = ["172.16.1.64/28"]
+  delegation {
+    name = "cicdDelegation"
+    service_delegation {
+      name = "Microsoft.Web/serverFarms"
+    }
+  }
 
   depends_on = [
     azurerm_resource_group.azureResourceGroup

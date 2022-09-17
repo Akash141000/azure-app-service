@@ -18,12 +18,21 @@ resource "azurerm_linux_web_app" "azureLinuxWebApp" {
   service_plan_id     = azurerm_service_plan.azureAppServicePlan.id
 
 
+
   site_config {}
 
 
   depends_on = [
     azurerm_resource_group.azureResourceGroup,
     azurerm_service_plan.azureAppServicePlan
+  ]
+}
+
+resource "azurerm_app_service_virtual_network_swift_connection" "backendSubnet" {
+  app_service_id = azurerm_linux_web_app.azureLinuxWebApp.id
+  subnet_id      = azurerm_subnet.backend.id
+  depends_on = [
+    azurerm_subnet.backend
   ]
 }
 

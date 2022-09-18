@@ -9,18 +9,24 @@ resource "azurerm_virtual_network" "vnet" {
   name                = local.vnet
   location            = local.location
   resource_group_name = local.resource_group_name
-  address_space       = ["172.16.1.0/25"]
+  address_space       = ["172.16.0.0/20"]
 
 
-  subnet {
-    name           = "frontend"
-    address_prefix = "172.16.1.0/26"
-  }
+  # subnet {
+  #   name           = "frontend"
+  #   address_prefix = "172.16.0.0/23"
+  # }
 
-  subnet {
-    name           = "backend"
-    address_prefix = "172.16.1.64/28"
-  }
+  # subnet {
+  #   name           = "backend"
+  #   address_prefix = "172.16.2.0/23"
+  # }
+
+  # subnet {
+  #   name           = "containerEnv"
+  #   address_prefix = "172.16.4.0/23"
+  # }
+
 
   tags = {
     environment = "dev"
@@ -36,7 +42,7 @@ resource "azurerm_subnet" "frontend" {
   name                 = "frontend"
   resource_group_name  = local.resource_group_name
   virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = ["172.16.1.0/26"]
+  address_prefixes     = ["172.16.0.0/23"]
 
   depends_on = [
     azurerm_resource_group.azureResourceGroup,
@@ -47,13 +53,32 @@ resource "azurerm_subnet" "backend" {
   name                 = "backend"
   resource_group_name  = local.resource_group_name
   virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = ["172.16.1.64/28"]
-  delegation {
-    name = "cicdDelegation"
-    service_delegation {
-      name = "Microsoft.Web/serverFarms"
-    }
-  }
+  address_prefixes     = ["172.16.2.0/23"]
+  # delegation {
+  #   name = "cicdDelegation"
+  #   service_delegation {
+  #     name = "Microsoft.Web/serverFarms"
+  #   }
+  # }
+
+  depends_on = [
+    azurerm_resource_group.azureResourceGroup
+
+  ]
+}
+
+
+resource "azurerm_subnet" "containerEnv" {
+  name                 = "containerEnv"
+  resource_group_name  = local.resource_group_name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = ["172.16.4.0/23"]
+  # delegation {
+  #   name = "cicdDelegation"
+  #   service_delegation {
+  #     name = "Microsoft.Web/serverFarms"
+  #   }
+  # }
 
   depends_on = [
     azurerm_resource_group.azureResourceGroup

@@ -14,11 +14,14 @@ resource "azapi_resource" "azureContainerAppEnv" {
         }
       }
       vnetConfiguration = {
-        infrastructureSubnetId = azurerm_subnet.backend.id
+        infrastructureSubnetId = azurerm_subnet.containerEnv.id
         runtimeSubnetId        = azurerm_subnet.backend.id
       }
     }
   })
+  depends_on = [
+    azurerm_resource_group.azureResourceGroup
+  ]
 }
 
 
@@ -27,7 +30,11 @@ resource "azapi_resource" "azureContainerApp" {
   type      = "Microsoft.App/containerApps@2022-03-01"
   parent_id = azurerm_resource_group.azureResourceGroup.id
   location  = local.location
-  name      = each.value.name
+  name      = "cicd-container-app"
+  identity {
+    type = "SystemAssigned"
+  }
+
 
   body = jsonencode({
     properties : {
@@ -41,8 +48,8 @@ resource "azapi_resource" "azureContainerApp" {
       template = {
         containers = [
           {
-            name  = local.container_name
-            image = "${each.value.image}"
+            name  = each.value.name
+            image = "nginx"
             resources = {
               cpu    = each.value.cpu_requests
               memory = each.value.mem_requests
@@ -57,4 +64,8 @@ resource "azapi_resource" "azureContainerApp" {
       }
     }
   })
+
+  depends_on = [
+    azurerm_resource_group.azureResourceGroup
+  ]
 }

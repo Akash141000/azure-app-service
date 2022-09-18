@@ -25,14 +25,14 @@ variable "container_apps" {
   }))
 
   default = [{
-    image           = "cicdtesting"
-    name            = "testing"
+    image           = "nginx"
+    name            = "testing-container"
     containerPort   = 80
     ingress_enabled = true
     min_replicas    = 1
     max_replicas    = 5
-    cpu_requests    = 0.5
-    mem_requests    = "1.0Gi"
+    cpu_requests    = 0.25
+    mem_requests    = "0.5Gi"
     },
   ]
 }

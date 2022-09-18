@@ -21,39 +21,39 @@ env:
 
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  # build:
+  #   runs-on: ubuntu-latest
 
-    steps:
-      # checkout the repo
-      - name: 'Checkout GitHub Action'
-        uses: actions/checkout@main
+  #   steps:
+  #     # checkout the repo
+  #     - name: 'Checkout GitHub Action'
+  #       uses: actions/checkout@main
 
-      - name: 'Login via Azure CLI'
-        uses: azure/login@v1
-        with:
-          # creds: ${{ secrets.AZURE_CREDS }}
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  #     - name: 'Login via Azure CLI'
+  #       uses: azure/login@v1
+  #       with:
+  #         # creds: ${{ secrets.AZURE_CREDS }}
+  #         client-id: ${{ secrets.AZURE_CLIENT_ID }}
+  #         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+  #         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - uses: azure/docker-login@v1
-        with:
-          login-server: ${{ env.REGISTRY_NAME }}.azurecr.io
-          username: ${{ secrets.REGISTRY_USERNAME }}
-          password: ${{ secrets.REGISTRY_PASSWORD }}
-      - run: |
-          docker build . -t ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
-          docker push  ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
+  #     - uses: azure/docker-login@v1
+  #       with:
+  #         login-server: ${{ env.REGISTRY_NAME }}.azurecr.io
+  #         username: ${{ secrets.REGISTRY_USERNAME }}
+  #         password: ${{ secrets.REGISTRY_PASSWORD }}
+  #     - run: |
+  #         docker build . -t ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
+  #         docker push  ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
 
-      # - uses: azure/webapps-deploy@v2     //deploy image azure app service
-      #   with:
-      #     app-name: '${{ env.APP_NAME }}'
-      #     images: '${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}'
+  #     # - uses: azure/webapps-deploy@v2     //deploy image azure app service
+  #     #   with:
+  #     #     app-name: '${{ env.APP_NAME }}'
+  #     #     images: '${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}'
 
-      - name: Azure logout
-        run: |
-          az logout
+  #     - name: Azure logout
+  #       run: |
+  #         az logout
 
 
   deploy:
@@ -64,10 +64,10 @@ jobs:
       - name: 'Login via Azure CLI'
         uses: azure/login@v1
         with:
-          # creds: ${{ secrets.AZURE_CREDS }}
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          
 
       # - name: 'Deploy Container App'
       #   uses: Azure/cli@v1
@@ -81,12 +81,13 @@ jobs:
       - name: 'Deploy Container App'
         uses: Azure/cli@v1
         with:
-          azcliversion: 2.30.0
+          azcliversion: 2.40.0
           inlineScript: |
             echo "Insalling containerapp extension"
-            az extension add --source https://workerappscliextension.blob.core.windows.net/azure-cli-extension/containerapp-0.2.0-py2.py3-none-any.whl --yes
+            az extension add -n containerapp 
             echo "Deployment started"
             az containerapp registry set -n ${{ env.REGISTRY_NAME }} -g ${{ env.RESOURCE_GROUP }} --server ${{ env.REGISTRY_NAME }}.azurecr.io --username  ${{ secrets.REGISTRY_USERNAME }} --password ${{ secrets.REGISTRY_PASSWORD }}
+            echo "Registry set"
             az containerapp update -n ${{ env.CONTAINER_APP_NAME }} -g ${{ env.RESOURCE_GROUP }} --image ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
 
       - name: Azure logout

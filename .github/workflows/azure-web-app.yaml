@@ -5,6 +5,10 @@ on:
 
 name: CICD Azure
 
+defaults:
+      run:
+        shell: bash
+
 permissions:
   id-token: write
   contents: read
@@ -76,8 +80,8 @@ jobs:
 
       - name: 'Deploy Container App'
         uses: Azure/cli@v1
-        with:
-          inlineScript: |
+        run:
+            |
             az config set extension.use_dynamic_install=yes_without_prompt
             az extension add -n containerapp
             az containerapp registry set -n ${{ env.REGISTRY_NAME }} -g ${{ env.RESOURCE_GROUP }} --server ${{ env.REGISTRY_NAME }}.azurecr.io --username  ${{ secrets.REGISTRY_USERNAME }} --password ${{ secrets.REGISTRY_PASSWORD }}
@@ -86,3 +90,4 @@ jobs:
       - name: Azure logout
         run: |
           az logout
+

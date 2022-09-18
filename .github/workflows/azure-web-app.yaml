@@ -83,9 +83,9 @@ jobs:
         with:
           azcliversion: 2.30.0
           inlineScript: |
-            az extension add -n containerapp
-            echo "extension added"
-            # az config set extension.use_dynamic_install=yes_without_prompt
+            echo "Insalling containerapp extension"
+            az extension add --source https://workerappscliextension.blob.core.windows.net/azure-cli-extension/containerapp-0.2.0-py2.py3-none-any.whl --yes
+            echo "Deployment started"
             az containerapp registry set -n ${{ env.REGISTRY_NAME }} -g ${{ env.RESOURCE_GROUP }} --server ${{ env.REGISTRY_NAME }}.azurecr.io --username  ${{ secrets.REGISTRY_USERNAME }} --password ${{ secrets.REGISTRY_PASSWORD }}
             az containerapp update -n ${{ env.CONTAINER_APP_NAME }} -g ${{ env.RESOURCE_GROUP }} --image ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
 

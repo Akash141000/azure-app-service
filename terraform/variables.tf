@@ -16,7 +16,6 @@ variable "container_apps" {
   type = list(object({
     name            = string
     image           = string
-    tag             = string
     containerPort   = number
     ingress_enabled = bool
     min_replicas    = number

@@ -1,6 +1,6 @@
 resource "azapi_resource" "azureContainerAppEnv" {
   type      = "Microsoft.App/managedEnvironments@2022-03-01"
-  parent_id = local.resource_group_name
+  parent_id = azurerm_resource_group.azureResourceGroup.id
   location  = local.location
   name      = "cicdContainerAppEnv"
 
@@ -25,7 +25,7 @@ resource "azapi_resource" "azureContainerAppEnv" {
 resource "azapi_resource" "azureContainerApp" {
   for_each  = { for ca in var.container_apps : ca.name => ca }
   type      = "Microsoft.App/containerApps@2022-03-01"
-  parent_id = local.resource_group_name
+  parent_id = azurerm_resource_group.azureResourceGroup.id
   location  = local.location
   name      = each.value.name
 

@@ -8,6 +8,7 @@ locals {
   fontend_public_ip_name  = "cicdpublicip"
   security_group_name     = "cicd-network-security-group"
   vnet                    = "cicdvnet"
+  container_name          = "cicd-testing"
 }
 
 
@@ -25,9 +26,8 @@ variable "container_apps" {
   }))
 
   default = [{
-    image           = "cicdtesting/acp"
+    image           = "cicdtesting"
     name            = "testing"
-    tag             = "cicd"
     containerPort   = 80
     ingress_enabled = true
     min_replicas    = 1

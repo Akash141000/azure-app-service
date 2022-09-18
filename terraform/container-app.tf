@@ -41,8 +41,8 @@ resource "azapi_resource" "azureContainerApp" {
       template = {
         containers = [
           {
-            name  = "main"
-            image = "${each.value.image}:${each.value.tag}"
+            name  = local.container_name
+            image = "${each.value.image}"
             resources = {
               cpu    = each.value.cpu_requests
               memory = each.value.mem_requests

@@ -12,7 +12,7 @@ permissions:
 env:  
   REGISTRY_NAME: cicdtestingregistry
   APP_NAME: cicd-testing
-  CONTAINER_NAME: cicdtesting
+  CONTAINER_NAME: cicd-container-app
   RESOURCE_GROUP : cicd-resource-group
 
 
